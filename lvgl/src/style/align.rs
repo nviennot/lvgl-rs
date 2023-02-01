@@ -33,3 +33,29 @@ crate::native_enum! {
         Off = lvgl_sys::lv_anim_enable_t_LV_ANIM_OFF,
     }
 }
+
+crate::native_enum! {
+    lvgl_sys::lv_grid_align_t,
+    pub enum GridAlign {
+        Start = lvgl_sys::lv_grid_align_t_LV_GRID_ALIGN_START,
+        Center = lvgl_sys::lv_grid_align_t_LV_GRID_ALIGN_CENTER,
+        End = lvgl_sys::lv_grid_align_t_LV_GRID_ALIGN_END,
+        Stretch = lvgl_sys::lv_grid_align_t_LV_GRID_ALIGN_STRETCH,
+        SpaceEvenly = lvgl_sys::lv_grid_align_t_LV_GRID_ALIGN_SPACE_EVENLY,
+        SpaceAround = lvgl_sys::lv_grid_align_t_LV_GRID_ALIGN_SPACE_AROUND,
+        SpaceBetween = lvgl_sys::lv_grid_align_t_LV_GRID_ALIGN_SPACE_BETWEEN,
+    }
+}
+
+// This seems ungly
+#[inline]
+pub fn grid_free(x: i16) -> i16 {
+    //#define LV_GRID_FR(x)          (LV_COORD_MAX - 100 + x)
+    (lvgl_sys::LV_COORD_MAX as i16) - 100 + x
+}
+
+#[inline]
+pub fn grid_last() -> i16 {
+    //#define LV_GRID_FR(x)          (LV_COORD_MAX - 100 + x)
+    lvgl_sys::LV_COORD_MAX as i16
+}

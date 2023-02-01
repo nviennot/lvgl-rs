@@ -31,7 +31,6 @@ fn generate_widgets(out_path: &Path) {
     .unwrap();
 }
 
-
 fn generate_color_settings(out_path: &Path) {
     let rs = out_path.join("generated-color-settings.rs");
 
@@ -39,14 +38,17 @@ fn generate_color_settings(out_path: &Path) {
     // This will enable fast drawing.
     let pixel_color = match (lvgl_sys::LV_COLOR_DEPTH, lvgl_sys::LV_COLOR_16_SWAP) {
         (1, _) => "BinaryColor",
-        (8, _) => panic!("RGB332 is not supported by embedded_graphics_core"),
+        (8, _) => panic!("RGB332 is not supported by embedded_graphics"),
         (16, 0) => "Rgb565",
         (16, 1) => "Bgr565",
         (32, _) => "Rgb888",
-        _ => panic!("Unrecognized (LV_COLOR_DEPTH, LV_COLOR_16_SWAP)")
+        _ => panic!("Unrecognized (LV_COLOR_DEPTH, LV_COLOR_16_SWAP)"),
     };
 
-    let code = format!("pub type PixelColor = embedded_graphics_core::pixelcolor::{};", pixel_color);
+    let code = format!(
+        "pub type PixelColor = embedded_graphics::pixelcolor::{};",
+        pixel_color
+    );
 
     let mut file = File::create(rs).unwrap();
     writeln!(

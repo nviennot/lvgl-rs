@@ -14,12 +14,14 @@ build = "build.rs"
 [dependencies]
 lvgl-sys = { version = "0.5.2", path = "../lvgl-sys" }
 cty = "0.2.1"
-embedded-graphics-core = "0.3"
+embedded-graphics = "0.7.1"
 cstr_core = "0.2.3"
 bitflags = "1.2.1"
 
 [features]
-lvgl_alloc = []
+alloc = ["cstr_core/alloc"]
+lvgl_alloc = ["alloc"]
+use-vendored-config = []
 logger = []
 
 [build-dependencies]
@@ -29,8 +31,8 @@ lvgl-codegen = { version = "0.5.2", path = "../lvgl-codegen" }
 lvgl-sys = { version = "0.5.2", path = "../lvgl-sys" }
 
 [dev-dependencies]
-embedded-graphics-simulator = "0.2.1"
-heapless = "0.5.5"
+embedded-graphics-simulator = "0.4.0"
+heapless = "0.7.13"
 
 [[example]]
 name = "demo"

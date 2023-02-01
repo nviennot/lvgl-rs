@@ -63,6 +63,7 @@ fn main() {
         .warnings(false)
         .include(&lv_config_dir)
         .archiver("arm-none-eabi-ar") // To avoid "has no symbols" warnings
+        .flag("-fshort-enums")
         .compile("lvgl");
 
     let mut cc_args = vec![
@@ -106,20 +107,25 @@ fn main() {
 
     let include_paths = String::from_utf8(
         Build::new()
-            .get_compiler().to_command()
-            .arg("-E").arg("-Wp,-v").arg("-xc").arg("/dev/null")
+            .get_compiler()
+            .to_command()
+            .arg("-E")
+            .arg("-Wp,-v")
+            .arg("-xc")
+            .arg("/dev/null")
             .stdout(std::process::Stdio::null())
             .stderr(std::process::Stdio::piped())
             .spawn()
             .expect("Failed to run the compiler to get paths")
             .wait_with_output()
             .expect("Failed to run the compiler to get paths")
-            .stderr
-        ).unwrap()
+            .stderr,
+    )
+    .unwrap()
     .lines()
-        .filter_map(|line| line.strip_prefix(" "))
-        .map(|path| format!("-I{}", path))
-        .collect::<Vec<_>>();
+    .filter_map(|line| line.strip_prefix(" "))
+    .map(|path| format!("-I{}", path))
+    .collect::<Vec<_>>();
 
     eprintln!("include_paths={:?}", include_paths);
 
@@ -148,7 +154,7 @@ fn add_c_files(build: &mut cc::Build, path: impl AsRef<Path>) {
     for entry in glob::glob(path.as_ref().join("**/*.c").to_str().unwrap()).unwrap() {
         let path = entry.unwrap();
         if path.extension().and_then(|s| s.to_str()) == Some("c") {
-           build.file(&path);
+            build.file(&path);
         }
     }
 }

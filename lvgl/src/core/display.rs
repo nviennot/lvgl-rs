@@ -1,18 +1,14 @@
-use alloc::boxed::Box;
 use super::Lvgl;
 use super::Screen;
+use alloc::boxed::Box;
 
 use core::{
     mem::{self, MaybeUninit},
-    ptr,
     ops::{Deref, DerefMut},
+    ptr,
 };
 
-use embedded_graphics_core::{
-    prelude::*,
-    draw_target::DrawTarget,
-    primitives::Rectangle,
-};
+use embedded_graphics::{draw_target::DrawTarget, prelude::*, primitives::Rectangle};
 
 //use super::{Obj, Screen};
 
@@ -73,17 +69,15 @@ impl<T: DrawTarget<Color = PixelColor> + OriginDimensions> Display<T> {
 
         let disp = unsafe {
             lvgl_sys::lv_disp_drv_register(disp_drv.as_mut())
-                .as_mut().unwrap()
+                .as_mut()
+                .unwrap()
         };
 
         // If we wanted to cleanup resources on drop, these would have to be freed.
         Box::into_raw(disp_draw_buf);
         Box::into_raw(disp_drv);
 
-        Self {
-            disp,
-            display,
-        }
+        Self { disp, display }
     }
 
     unsafe extern "C" fn display_flush_cb(
@@ -100,14 +94,12 @@ impl<T: DrawTarget<Color = PixelColor> + OriginDimensions> Display<T> {
 
         let area = Rectangle::with_corners(
             ((*area).x1 as i32, (*area).y1 as i32).into(),
-            ((*area).x2 as i32, (*area).y2 as i32).into()
+            ((*area).x2 as i32, (*area).y2 as i32).into(),
         );
 
         let num_pixels = (area.size.width * area.size.height) as usize;
         let colors = core::slice::from_raw_parts(color_p as *const PixelColor, num_pixels);
-        let colors = colors
-            .iter()
-            .cloned();
+        let colors = colors.iter().cloned();
 
         // Ignore errors
         let _ = display.fill_contiguous(&area, colors);
